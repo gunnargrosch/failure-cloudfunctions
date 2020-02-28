@@ -1,40 +1,37 @@
-# Failure injection for AWS Lambda - failure-lambda
+# Failure injection for Google Cloud Functions - failure-cloudfunctions
 
 ## Description
 
-`failure-lambda` is a small Node module for injecting failure into AWS Lambda (https://aws.amazon.com/lambda). It offers a simple failure injection wrapper for your Lambda handler where you then can choose to inject failure by setting the `failureMode` to `latency`, `exception`, `blacklist`, `diskspace` or `statuscode`. You control your failure injection using SSM Parameter Store.
+`failure-cloudfunctions` is a small Node module for injecting failure into Google Cloud Functions (https://cloud.google.com/functions/). It offers a simple failure injection wrapper for your Cloud Functions handler where you then can choose to inject failure by setting the `failureMode` to `latency`, `exception`, `blacklist`, `diskspace` or `statuscode`. You control your failure injection using SSM Parameter Store.
 
 ## How to install
 
-1. Install `failure-lambda` module using NPM.
+1. Install `failure-cloudfunctions` module using NPM.
 ```bash
-npm install failure-lambda
+npm install failure-cloudfunctions
 ```
-2. Add the module to your Lambda function code.
+2. Add the module to your Cloud Functions function code.
 ```js
-const failureLambda = require('failure-lambda')
+const failureCloudFunctions = require('failure-cloudfunctions')
 ```
 3. Wrap your handler.
 ```js
-exports.handler = failureLambda(async (event, context) => {
+exports.handler = failureCloudFunctions((req, res) => {
   ...
 })
 ```
-4. Create a parameter in SSM Parameter Store.
+4. Create a parameter Secret Manager.
 ```json
 {"isEnabled": false, "failureMode": "latency", "rate": 1, "minLatency": 100, "maxLatency": 400, "exceptionMsg": "Exception message!", "statusCode": 404, "diskSpace": 100, "blacklist": ["s3.*.amazonaws.com", "dynamodb.*.amazonaws.com"]}
 ```
-```bash
-aws ssm put-parameter --region eu-west-1 --name failureLambdaConfig --type String --overwrite --value "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 400, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100, \"blacklist\": [\"s3.*.amazonaws.com\", \"dynamodb.*.amazonaws.com\"]}"
-```
-5. Add an environment variable to your Lambda function with the key FAILURE_INJECTION_PARAM and the value set to the name of your parameter in SSM Parameter Store.
+5. Add an environment variable to your Cloud Function with the key FAILURE_INJECTION_PARAM and the value set to the name of your parameter in Secret Manager.
 6. Try it out!
 
 ## Usage
 
-Edit the values of your parameter in SSM Parameter Store to use the failure injection module.
+Edit the values of your parameter in Secret Manager to use the failure injection module.
 
-* `isEnabled: true` means that failure is injected into your Lambda function.
+* `isEnabled: true` means that failure is injected into your Cloud Function.
 * `isEnabled: false` means that the failure injection module is disabled and no failure is injected.
 * `failureMode` selects which failure you want to inject. The options are `latency`, `exception`, `blacklist`, `diskspace` or `statuscode` as explained below.
 * `rate` controls the rate of failure. 1 means that failure is injected on all invocations and 0.5 that failure is injected on about half of all invocations.
@@ -46,33 +43,15 @@ Edit the values of your parameter in SSM Parameter Store to use the failure inje
 
 ## Example
 
-In the subfolder `example` is a simple Serverless Framework template which will install a Lambda function and a parameter in SSM Parameter Store.
-```bash
-npm i failure-lambda
-sls deploy
-```
+In the subfolder `example` is a simple function which can be installed in Google Cloud and used for test.
 
 ## Notes
 
-Inspired by Yan Cui's articles on latency injection for AWS Lambda (https://hackernoon.com/chaos-engineering-and-aws-lambda-latency-injection-ddeb4ff8d983) and Adrian Hornsby's chaos injection library for Python (https://github.com/adhorn/aws-lambda-chaos-injection/).
+Inspired by Yan Cui's articles on latency injection for Google Cloud Functions (https://hackernoon.com/chaos-engineering-and-aws-lambda-latency-injection-ddeb4ff8d983) and Adrian Hornsby's chaos injection library for Python (https://github.com/adhorn/aws-lambda-chaos-injection/).
 
 ## Changelog
 
-### 2020-02-17 v0.2.0
-
-* Added blacklist failure.
-* Updated example application to store file in S3 and item in DynamoDB.
-
-### 2020-02-13 v0.1.1
-
-* Fixed issue with exception injection not throwing the exception.
-
-### 2019-12-30 v0.1.0
-
-* Added disk space failure.
-* Updated example application to store example file in tmp.
-
-### 2019-12-23 v0.0.1
+### 2020-02-28 v0.0.1
 
 * Initial release
 

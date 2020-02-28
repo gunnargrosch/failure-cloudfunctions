@@ -1,14 +1,14 @@
 {
-  "name": "failure-lambda",
-  "version": "0.2.0",
-  "description": "Module for failure injection into AWS Lambda",
+  "name": "failure-cloudfunctions",
+  "version": "0.0.1",
+  "description": "Module for failure injection into Google Cloud Functions",
   "main": "./lib/failure.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gunnargrosch/failure-lambda.git"
+    "url": "git+https://github.com/gunnargrosch/failure-cloudfunctions.git"
   },
   "keywords": [
     "aws",
@@ -21,11 +21,10 @@
   "author": "Gunnar Grosch",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gunnargrosch/failure-lambda/issues"
+    "url": "https://github.com/gunnargrosch/failure-cloudfunctions/issues"
   },
-  "homepage": "https://github.com/gunnargrosch/failure-lambda#readme",
+  "homepage": "https://github.com/gunnargrosch/failure-cloudfunctions#readme",
   "devDependencies": {
-    "aws-sdk": "^2.595.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.19.1",
