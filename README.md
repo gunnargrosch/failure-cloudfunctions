@@ -63,6 +63,11 @@ Inspired by Yan Cui's articles on latency injection for Google Cloud Functions (
 
 ## Changelog
 
+### 2020-03-01 v0.2.1
+
+* Added permission info to documentation.
+* Fixed tmp path in library and example.
+
 ### 2020-03-01 v0.2.0
 
 * Fixed Secret Manager integration.
