@@ -1,6 +1,6 @@
 {
   "name": "failure-cloudfunctions",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "Module for failure injection into Google Cloud Functions",
   "main": "./lib/failure.js",
   "scripts": {
