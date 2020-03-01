@@ -2,7 +2,7 @@
 
 ## Description
 
-`failure-cloudfunctions` is a small Node module for injecting failure into Google Cloud Functions (https://cloud.google.com/functions/). It offers a simple failure injection wrapper for your Cloud Functions handler where you then can choose to inject failure by setting the `failureMode` to `latency`, `exception`, `blacklist`, `diskspace` or `statuscode`. You control your failure injection using SSM Parameter Store.
+`failure-cloudfunctions` is a small Node module for injecting failure into Google Cloud Functions (https://cloud.google.com/functions/). It offers a simple failure injection wrapper for your Cloud Functions handler where you then can choose to inject failure by setting the `failureMode` to `latency`, `exception`, `blacklist`, `diskspace` or `statuscode`. You control your failure injection using a secret in Secret Manager.
 
 ## How to install
 
@@ -16,15 +16,19 @@ const failureCloudFunctions = require('failure-cloudfunctions')
 ```
 3. Wrap your handler.
 ```js
-exports.handler = failureCloudFunctions((req, res) => {
+exports.handler = failureCloudFunctions(async (req, res) => {
   ...
 })
 ```
-4. Create a parameter Secret Manager.
+4. Create a secret in Secret Manager.
 ```json
-{"isEnabled": false, "failureMode": "latency", "rate": 1, "minLatency": 100, "maxLatency": 400, "exceptionMsg": "Exception message!", "statusCode": 404, "diskSpace": 100, "blacklist": ["s3.*.amazonaws.com", "dynamodb.*.amazonaws.com"]}
+{"isEnabled": false, "failureMode": "latency", "rate": 1, "minLatency": 100, "maxLatency": 400, "exceptionMsg": "Exception message!", "statusCode": 404, "diskSpace": 100, "blacklist": ["storage.googleapis.com"]}
 ```
-5. Add an environment variable to your Cloud Function with the key FAILURE_INJECTION_PARAM and the value set to the name of your parameter in Secret Manager.
+```bash
+gcloud beta secrets create <your-secret-name> --replication-policy="automatic"
+echo -n "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 400, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100, \"blacklist\": [\"storage.googleapis.com\"]}" | gcloud beta secrets versions add <your-secret-name> --data-file=-
+```
+5. Add an environment variable to your Cloud Function with the key FAILURE_INJECTION_PARAM and the value set to the name of your secret in Secret Manager.
 6. Try it out!
 
 ## Usage
@@ -50,6 +54,12 @@ In the subfolder `example` is a simple function which can be installed in Google
 Inspired by Yan Cui's articles on latency injection for Google Cloud Functions (https://hackernoon.com/chaos-engineering-and-aws-lambda-latency-injection-ddeb4ff8d983) and Adrian Hornsby's chaos injection library for Python (https://github.com/adhorn/aws-lambda-chaos-injection/).
 
 ## Changelog
+
+### 2020-03-01 v0.2.0
+
+* Fixed Secret Manager integration.
+* Added simple example.
+* Updated documentation.
 
 ### 2020-02-28 v0.0.1
 
