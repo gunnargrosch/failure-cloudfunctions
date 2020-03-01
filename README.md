@@ -28,8 +28,16 @@ exports.handler = failureCloudFunctions(async (req, res) => {
 gcloud beta secrets create <your-secret-name> --replication-policy="automatic"
 echo -n "{\"isEnabled\": false, \"failureMode\": \"latency\", \"rate\": 1, \"minLatency\": 100, \"maxLatency\": 400, \"exceptionMsg\": \"Exception message!\", \"statusCode\": 404, \"diskSpace\": 100, \"blacklist\": [\"storage.googleapis.com\"]}" | gcloud beta secrets versions add <your-secret-name> --data-file=-
 ```
-5. Add an environment variable to your Cloud Function with the key FAILURE_INJECTION_PARAM and the value set to the name of your secret in Secret Manager.
-6. Try it out!
+5. Add environment variables to your Cloud Function with values from above.
+```bash
+GCP_PROJECT=<your-gcp-project-id>
+FAILURE_INJECTION_PARAM=<your-secret-name>
+```
+6. Give your Cloud Function access to your secret in Secret Manager.
+```bash
+gcloud beta secrets add-iam-policy-binding <your-secret-name> --role roles/secretmanager.secretAccessor --member serviceAccount:<your-gcp-project-id>@appspot.gserviceaccount.com
+```
+7. Try it out!
 
 ## Usage
 

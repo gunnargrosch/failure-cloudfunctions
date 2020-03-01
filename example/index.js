@@ -4,7 +4,7 @@ const fs = require('fs')
 
 exports.handler = failureCloudFunctions(async (req, res) => {
   try {
-    fs.writeFile(process.env.TMP + '/example-' + Date.now() + '.tmp', 'Contents', (err) => {
+    fs.writeFile('/tmp/example-' + Date.now() + '.tmp', 'Contents', (err) => {
       if (err) throw err
     })
     let response = 'Hello failureCloudFunctions!'
